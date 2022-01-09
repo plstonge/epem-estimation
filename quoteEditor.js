@@ -60,6 +60,69 @@ customElements.define('tool-bar', ToolBar, { extends: 'div' })
 
 
 /**
+ * @class ServicesSection
+ *
+ * The app Services section
+ */
+class ServicesSection extends HTMLDivElement {
+  constructor() {
+    super()
+
+    // Section title
+    let title = document.createElement('h2')
+    title.textContent = 'Services'
+
+    // Distance form
+    let distForm = document.createElement('form')
+
+    let distLabel = document.createElement('label')
+    distLabel.setAttribute('for', 'distance')
+    distLabel.style = 'margin-right: 6px;'
+    distLabel.textContent = "Distance de transport à l'aller (en Km) :"
+
+    this.distance = document.createElement('input')
+    this.distance.type = 'number'
+    this.distance.id = 'distance'
+    this.distance.min = '0'
+    this.distance.max = '255'
+    this.distance.value = '0'
+
+    distForm.append(distLabel, this.distance)
+
+    // List of services - empty div
+    this.services = document.createElement('div')
+
+    // Append all
+    this.append(title, distForm, this.services)
+  }
+}
+customElements.define('services-section', ServicesSection, { extends: 'div' })
+
+
+/**
+ * @class QuoteSection
+ *
+ * The app Quote section
+ */
+class QuoteSection extends HTMLDivElement {
+  constructor() {
+    super()
+
+    // Section title
+    let title = document.createElement('h2')
+    title.textContent = 'Soumission'
+
+    // The detailed quote - empty div
+    this.quote = document.createElement('div')
+
+    // Append all
+    this.append(title, this.quote)
+  }
+}
+customElements.define('quote-section', QuoteSection, { extends: 'div' })
+
+
+/**
  * @class QuoteEditor
  *
  * The main app user interface
@@ -69,6 +132,9 @@ class QuoteEditor {
     this.app = document.getElementById('quoteEditor')
 
     this.toolbar = new ToolBar()
-    this.app.append(this.toolbar)
+    this.services = new ServicesSection()
+    this.quote = new QuoteSection()
+
+    this.app.append(this.toolbar, this.services, this.quote)
   }
 }
