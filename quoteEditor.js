@@ -69,16 +69,16 @@ class ServicesSection extends HTMLDivElement {
     super()
 
     // Section title
-    let title = document.createElement('h2')
-    title.textContent = 'Services'
+    const title = document.createElement('h2')
+    title.textContent = 'Sélection de services'
 
     // Distance form
-    let distForm = document.createElement('form')
+    const distForm = document.createElement('form')
 
-    let distLabel = document.createElement('label')
+    const distLabel = document.createElement('label')
     distLabel.setAttribute('for', 'distance')
     distLabel.style = 'margin-right: 6px;'
-    distLabel.textContent = "Distance de transport à l'aller (en Km) :"
+    distLabel.textContent = "Distance de transport à l'aller :"
 
     this.distance = document.createElement('input')
     this.distance.type = 'number'
@@ -86,8 +86,14 @@ class ServicesSection extends HTMLDivElement {
     this.distance.min = '0'
     this.distance.max = '255'
     this.distance.value = '0'
+    this.distance.style = 'width: 1in;'
 
-    distForm.append(distLabel, this.distance)
+    const distUnits = document.createElement('label')
+    distUnits.setAttribute('for', 'distance')
+    distUnits.style = 'margin-left: 6px;'
+    distUnits.textContent = "km"
+
+    distForm.append(distLabel, this.distance, distUnits)
 
     // List of services - empty div
     this.services = document.createElement('div')
@@ -109,14 +115,25 @@ class QuoteSection extends HTMLDivElement {
     super()
 
     // Section title
-    let title = document.createElement('h2')
+    const title = document.createElement('h2')
     title.textContent = 'Soumission'
+
+    // Section introduction
+    const pDist = document.createElement('p')
+    const textDistB = document.createTextNode('Étant donné un déplacement de ')
+    this.distance = document.createElement('span')
+    const textDistE = document.createTextNode(' km :')
+    pDist.append(textDistB, this.distance, textDistE)
 
     // The detailed quote - empty div
     this.quote = document.createElement('div')
 
     // Append all
-    this.append(title, this.quote)
+    this.append(title, pDist, this.quote)
+  }
+
+  updateAll(detailedQuote) {
+    this.distance.textContent = detailedQuote.distance
   }
 }
 customElements.define('quote-section', QuoteSection, { extends: 'div' })
@@ -136,5 +153,23 @@ class QuoteEditor {
     this.quote = new QuoteSection()
 
     this.app.append(this.toolbar, this.services, this.quote)
+  }
+
+  bindDistanceEdited(handler) {
+    const handleNewDistance = (event) => {
+      const distance = parseFloat(event.target.value)
+      if (!isNaN(distance) && distance >= 0) {
+        handler(distance)
+      }
+    }
+    this.services.distance.addEventListener('change', (event) => {
+      handleNewDistance(event)
+    })
+    this.services.distance.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault()
+        handleNewDistance(event)
+      }
+    })
   }
 }
