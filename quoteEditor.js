@@ -1,9 +1,29 @@
 /**
- * @class ButtonGroup
+ * @class ToolBarButton
+ *
+ * Button for tool-bars
+ */
+class ToolBarButton extends HTMLButtonElement {
+  constructor(textContent) {
+    super()
+
+    // Bootstrap 5 attributes
+    this.classList.add('btn', 'btn-secondary')
+    this.setAttribute('type', 'button')
+
+    // Displayed text
+    this.textContent = textContent
+  }
+}
+customElements.define('toolbar-button', ToolBarButton, { extends: 'button' })
+
+
+/**
+ * @class ToolBarGroup
  *
  * Group of buttons in a tool-bar
  */
-class ButtonGroup extends HTMLDivElement {
+class ToolBarGroup extends HTMLDivElement {
   constructor(name) {
     super()
 
@@ -13,25 +33,7 @@ class ButtonGroup extends HTMLDivElement {
     this.setAttribute('aria-label', name)
   }
 }
-customElements.define('button-group', ButtonGroup, { extends: 'div' })
-
-
-/**
- * @class ToolBarButton
- *
- * Button for tool-bars
- */
-class ToolBarButton extends HTMLButtonElement {
-  constructor(name) {
-    super()
-
-    // Bootstrap 5 attributes
-    this.classList.add('btn', 'btn-secondary')
-    this.setAttribute('type', 'button')
-    this.textContent = name
-  }
-}
-customElements.define('toolbar-button', ToolBarButton, { extends: 'button' })
+customElements.define('toolbar-group', ToolBarGroup, { extends: 'div' })
 
 
 /**
@@ -49,14 +51,66 @@ class ToolBar extends HTMLDivElement {
     this.setAttribute('aria-label', 'Toolbar with button groups')
 
     // Button group for the New button
-    this.groupNew = new ButtonGroup('Group New')
-    this.buttonNew = new ToolBarButton('Nouvelle soumission')
+    this.groupNew = new ToolBarGroup('group_new')
+    this.buttonNew = new ToolBarButton(tr('New_quote'))
 
     this.groupNew.append(this.buttonNew)
     this.append(this.groupNew)
   }
 }
 customElements.define('tool-bar', ToolBar, { extends: 'div' })
+
+
+/**
+ * @class DistanceForm
+ *
+ * Distance editor
+ */
+class DistanceForm extends HTMLFormElement {
+  constructor() {
+    super()
+
+    // Label before distance input
+    const distLabel = document.createElement('label')
+    distLabel.setAttribute('for', 'distance')
+    distLabel.style = 'margin-right: 6px;'
+    distLabel.textContent = tr('Distance_to_destination')
+
+    // The distance input field
+    this.distance = document.createElement('input')
+    this.distance.id = 'distance'
+    this.distance.type = 'number'
+    this.distance.min = distance_properties.min
+    this.distance.max = distance_properties.max
+    this.distance.value = distance_properties.default
+    this.distance.style = 'width: 1in;'
+
+    // Distance units - km
+    const distUnits = document.createElement('label')
+    distUnits.setAttribute('for', 'distance')
+    distUnits.style = 'margin-left: 6px;'
+    distUnits.textContent = "km"
+
+    this.append(distLabel, this.distance, distUnits)
+  }
+
+  bindDistanceEdited(handler) {
+    const handleNewDistance = (event) => {
+      handler(parseFloat(event.target.value))
+    }
+
+    this.distance.addEventListener('change', (event) => {
+      handleNewDistance(event)
+    })
+    this.distance.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault()
+        handleNewDistance(event)
+      }
+    })
+  }
+}
+customElements.define('distance-form', DistanceForm, { extends: 'form' })
 
 
 /**
@@ -70,36 +124,20 @@ class ServicesSection extends HTMLDivElement {
 
     // Section title
     const title = document.createElement('h2')
-    title.textContent = 'Sélection de services'
+    title.textContent = tr('Select_services')
 
     // Distance form
-    const distForm = document.createElement('form')
-
-    const distLabel = document.createElement('label')
-    distLabel.setAttribute('for', 'distance')
-    distLabel.style = 'margin-right: 6px;'
-    distLabel.textContent = "Distance de transport à l'aller :"
-
-    this.distance = document.createElement('input')
-    this.distance.type = 'number'
-    this.distance.id = 'distance'
-    this.distance.min = '0'
-    this.distance.max = '255'
-    this.distance.value = '0'
-    this.distance.style = 'width: 1in;'
-
-    const distUnits = document.createElement('label')
-    distUnits.setAttribute('for', 'distance')
-    distUnits.style = 'margin-left: 6px;'
-    distUnits.textContent = "km"
-
-    distForm.append(distLabel, this.distance, distUnits)
+    this.distForm = new DistanceForm()
 
     // List of services - empty div
     this.services = document.createElement('div')
 
     // Append all
-    this.append(title, distForm, this.services)
+    this.append(title, this.distForm, this.services)
+  }
+
+  bindDistanceEdited(handler) {
+    this.distForm.bindDistanceEdited(handler)
   }
 }
 customElements.define('services-section', ServicesSection, { extends: 'div' })
@@ -116,11 +154,11 @@ class QuoteSection extends HTMLDivElement {
 
     // Section title
     const title = document.createElement('h2')
-    title.textContent = 'Soumission'
+    title.textContent = tr('Quote')
 
     // Section introduction
     const pDist = document.createElement('p')
-    const textDistB = document.createTextNode('Étant donné un déplacement de ')
+    const textDistB = document.createTextNode(tr('With_main_distance'))
     this.distance = document.createElement('span')
     const textDistE = document.createTextNode(' km :')
     pDist.append(textDistB, this.distance, textDistE)
@@ -156,20 +194,10 @@ class QuoteEditor {
   }
 
   bindDistanceEdited(handler) {
-    const handleNewDistance = (event) => {
-      const distance = parseFloat(event.target.value)
-      if (!isNaN(distance) && distance >= 0) {
-        handler(distance)
-      }
-    }
-    this.services.distance.addEventListener('change', (event) => {
-      handleNewDistance(event)
-    })
-    this.services.distance.addEventListener("keypress", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault()
-        handleNewDistance(event)
-      }
-    })
+    this.services.bindDistanceEdited(handler)
+  }
+
+  quoteUpdateAll(detailedQuote) {
+    this.quote.updateAll(detailedQuote)
   }
 }
