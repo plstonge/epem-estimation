@@ -3,22 +3,10 @@ class QuoteApp {
     this.quote = quote
     this.editor = editor
 
-    // To-view bindings
-    this.quote.bindAllChanged(this.onQuoteAllChanged)
-
-    // To-model bindings
-    this.editor.bindDistanceEdited(this.handleDistanceChanged)
-
     // Update editor
-    this.onQuoteAllChanged(this.quote.detailedQuote)
-  }
-
-  handleDistanceChanged = (distance) => {
-    this.quote.setDistance(distance)
-  }
-
-  onQuoteAllChanged = (detailedQuote) => {
-    this.editor.quoteUpdateAll(detailedQuote)
+    for (const service of this.quote.services) {
+      this.editor.addService(service)
+    }
   }
 }
 

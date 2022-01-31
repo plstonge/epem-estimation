@@ -62,6 +62,97 @@ customElements.define('tool-bar', ToolBar, { extends: 'div' })
 
 
 /**
+ * @class ServiceSelector
+ *
+ * Selector of one service
+ */
+class ServiceSelector extends HTMLDivElement {
+  constructor(service_id, type_id) {
+    super()
+
+    // Bootstrap 5 attributes
+    this.classList.add('row')
+
+    // Label before the service selector
+    const typeLabel = document.createElement('label')
+    typeLabel.setAttribute('for', 'type_' + service_id)
+    typeLabel.classList.add('col-sm-2', 'col-form-label')
+    typeLabel.textContent = tr('Type_of_service')
+
+    // The selector
+    this.selector = document.createElement('select')
+    this.selector.id = 'type_' + service_id
+    this.selector.classList.add('col-sm-10', 'col-form-select')
+
+    for (const service_type of service_types) {
+      const opt = document.createElement('option')
+      opt.value = service_type.id
+      opt.text = service_type.name
+      this.selector.add(opt)
+    }
+    this.selector.value = type_id
+
+    this.append(typeLabel, this.selector)
+  }
+}
+customElements.define('service-selector', ServiceSelector, { extends: 'div' })
+
+
+/**
+ * @class ServiceEditor
+ *
+ * Editor of one service
+ */
+ class ServiceEditor extends HTMLDivElement {
+  constructor(service) {
+    super()
+
+    this.id = 'service_' + service.id
+
+    // Drop-down type selector
+    const typeSelect = new ServiceSelector(service.id, service.type_id)
+
+    this.append(typeSelect)
+  }
+}
+customElements.define('service-editor', ServiceEditor, { extends: 'div' })
+
+
+/**
+ * @class ServicesSection
+ *
+ * The app Services section
+ */
+class ServicesSection extends HTMLDivElement {
+  constructor() {
+    super()
+
+    // Section title
+    const title = document.createElement('h2')
+    title.textContent = tr('Select_services')
+
+    // List of services - empty div
+    this.services = document.createElement('div')
+
+    // Add button
+    this.addButton = document.createElement('button')
+    this.addButton.classList.add('btn', 'btn-secondary')
+    this.addButton.setAttribute('type', 'button')
+    this.addButton.textContent = tr('Add_service')
+
+    // Append all
+    this.append(title, this.services, this.addButton)
+  }
+
+  add(service) {
+    const newServiceEditor = new ServiceEditor(service)
+    this.services.append(newServiceEditor)
+  }
+}
+customElements.define('services-section', ServicesSection, { extends: 'div' })
+
+
+/**
  * @class DistanceForm
  *
  * Distance editor
@@ -114,33 +205,26 @@ customElements.define('distance-form', DistanceForm, { extends: 'form' })
 
 
 /**
- * @class ServicesSection
+ * @class StaffSection
  *
- * The app Services section
+ * The app Staff section
  */
-class ServicesSection extends HTMLDivElement {
+class StaffSection extends HTMLDivElement {
   constructor() {
     super()
 
     // Section title
     const title = document.createElement('h2')
-    title.textContent = tr('Select_services')
+    title.textContent = tr('Select_staff_members')
 
-    // Distance form
-    this.distForm = new DistanceForm()
-
-    // List of services - empty div
-    this.services = document.createElement('div')
+    // List of staff members - empty div
+    this.staff = document.createElement('div')
 
     // Append all
-    this.append(title, this.distForm, this.services)
-  }
-
-  bindDistanceEdited(handler) {
-    this.distForm.bindDistanceEdited(handler)
+    this.append(title, this.staff)
   }
 }
-customElements.define('services-section', ServicesSection, { extends: 'div' })
+customElements.define('staff-section', StaffSection, { extends: 'div' })
 
 
 /**
@@ -156,22 +240,11 @@ class QuoteSection extends HTMLDivElement {
     const title = document.createElement('h2')
     title.textContent = tr('Quote')
 
-    // Section introduction
-    const pDist = document.createElement('p')
-    const textDistB = document.createTextNode(tr('With_main_distance'))
-    this.distance = document.createElement('span')
-    const textDistE = document.createTextNode(' km :')
-    pDist.append(textDistB, this.distance, textDistE)
-
     // The detailed quote - empty div
     this.quote = document.createElement('div')
 
     // Append all
-    this.append(title, pDist, this.quote)
-  }
-
-  updateAll(detailedQuote) {
-    this.distance.textContent = detailedQuote.distance
+    this.append(title, this.quote)
   }
 }
 customElements.define('quote-section', QuoteSection, { extends: 'div' })
@@ -188,16 +261,13 @@ class QuoteEditor {
 
     this.toolbar = new ToolBar()
     this.services = new ServicesSection()
+    this.staff = new StaffSection()
     this.quote = new QuoteSection()
 
-    this.app.append(this.toolbar, this.services, this.quote)
+    this.app.append(this.toolbar, this.services, this.staff, this.quote)
   }
 
-  bindDistanceEdited(handler) {
-    this.services.bindDistanceEdited(handler)
-  }
-
-  quoteUpdateAll(detailedQuote) {
-    this.quote.updateAll(detailedQuote)
+  addService(service) {
+    this.services.add(service)
   }
 }
