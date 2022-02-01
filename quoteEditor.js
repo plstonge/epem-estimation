@@ -71,18 +71,12 @@ class ServiceSelector extends HTMLDivElement {
     super()
 
     // Bootstrap 5 attributes
-    this.classList.add('row')
-
-    // Label before the service selector
-    const typeLabel = document.createElement('label')
-    typeLabel.setAttribute('for', 'type_' + service_id)
-    typeLabel.classList.add('col-sm-2', 'col-form-label')
-    typeLabel.textContent = tr('Type_of_service')
+    this.classList.add('form-floating')
 
     // The selector
     this.selector = document.createElement('select')
     this.selector.id = 'type_' + service_id
-    this.selector.classList.add('col-sm-10', 'col-form-select')
+    this.selector.classList.add('form-select')
 
     for (const service_type of service_types) {
       const opt = document.createElement('option')
@@ -92,7 +86,12 @@ class ServiceSelector extends HTMLDivElement {
     }
     this.selector.value = type_id
 
-    this.append(typeLabel, this.selector)
+    // Label before the service selector
+    const typeLabel = document.createElement('label')
+    typeLabel.setAttribute('for', this.selector.id)
+    typeLabel.textContent = tr('Type_of_service')
+
+    this.append(this.selector, typeLabel)
   }
 }
 customElements.define('service-selector', ServiceSelector, { extends: 'div' })
@@ -108,6 +107,9 @@ customElements.define('service-selector', ServiceSelector, { extends: 'div' })
     super()
 
     this.id = 'service_' + service.id
+
+    // Bootstrap 5 attributes
+    this.classList.add('border', 'mb-1', 'p-1', 'rounded')
 
     // Drop-down type selector
     const typeSelect = new ServiceSelector(service.id, service.type_id)
