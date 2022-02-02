@@ -3,10 +3,30 @@ class QuoteApp {
     this.quote = quote
     this.editor = editor
 
-    // Update editor
-    for (const service of this.quote.services) {
-      this.editor.addService(service)
+    // Bind events from Quote
+    this.quote.bindServiceAdded(this.onServiceAdded)
+
+    // Bind events from Editor
+    this.editor.bindNewClicked(this.handleNewClicked)
+    this.editor.bindAddServiceClicked(this.handleAddServiceClicked)
+
+    // Start with a new quote
+    this.quote.startNew()
+  }
+
+  handleAddServiceClicked = () => {
+    this.quote.addService()
+  }
+
+  handleNewClicked = () => {
+    if (this.quote.modified && confirm(tr('Confirm_New'))) {
+      this.editor.reset()
+      this.quote.startNew()
     }
+  }
+
+  onServiceAdded = (service) => {
+    this.editor.addService(service)
   }
 }
 

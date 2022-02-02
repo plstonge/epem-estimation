@@ -5,6 +5,9 @@ const epem_text = {
   'Bringing_key': {
     'fr': 'Ramener la ou les clés',
   },
+  'Confirm_New': {
+    'fr': 'Créer une nouvelle soumission détruira la soumission actuelle. Voulez-vous vraiment recommencer à neuf?'
+  },
   'Distance_to_destination': {
     'fr': "Distance de transport à l'aller :",
   },

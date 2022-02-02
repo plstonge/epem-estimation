@@ -57,6 +57,10 @@ class ToolBar extends HTMLDivElement {
     this.groupNew.append(this.buttonNew)
     this.append(this.groupNew)
   }
+
+  bindNewClicked(handle) {
+    this.buttonNew.addEventListener('click', handle)
+  }
 }
 customElements.define('tool-bar', ToolBar, { extends: 'div' })
 
@@ -137,18 +141,28 @@ class ServicesSection extends HTMLDivElement {
     this.services = document.createElement('div')
 
     // Add button
-    this.addButton = document.createElement('button')
-    this.addButton.classList.add('btn', 'btn-secondary')
-    this.addButton.setAttribute('type', 'button')
-    this.addButton.textContent = tr('Add_service')
+    this.buttonAdd = document.createElement('button')
+    this.buttonAdd.classList.add('btn', 'btn-secondary')
+    this.buttonAdd.setAttribute('type', 'button')
+    this.buttonAdd.textContent = tr('Add_service')
 
     // Append all
-    this.append(title, this.services, this.addButton)
+    this.append(title, this.services, this.buttonAdd)
   }
 
   add(service) {
     const newServiceEditor = new ServiceEditor(service)
     this.services.append(newServiceEditor)
+  }
+
+  bindAddServiceClicked(handle) {
+    this.buttonAdd.addEventListener('click', handle)
+  }
+
+  reset() {
+    while (this.services.firstChild) {
+      this.services.removeChild(this.services.firstChild)
+    }
   }
 }
 customElements.define('services-section', ServicesSection, { extends: 'div' })
@@ -271,5 +285,17 @@ class QuoteEditor {
 
   addService(service) {
     this.services.add(service)
+  }
+
+  bindAddServiceClicked(handle) {
+    this.services.bindAddServiceClicked(handle)
+  }
+
+  bindNewClicked(handle) {
+    this.toolbar.bindNewClicked(handle)
+  }
+
+  reset() {
+    this.services.reset()
   }
 }

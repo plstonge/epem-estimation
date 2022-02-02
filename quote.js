@@ -46,15 +46,7 @@ class DetailedQuote {
  */
 class Quote {
   constructor() {
-    this.modified = false
-
-    this.services = []
-    this.staff = []
     this.detailedQuote = new DetailedQuote()
-
-    // Usually a first visit and a pet sitting
-    this.addService()
-    this.addService()
   }
 
   _callBack(callback, ...args) {
@@ -82,22 +74,36 @@ class Quote {
     // Add new service
     const new_service = new EpemService(unique_id, type_id)
     this.services.push(new_service)
+    this._callBack(this.onServiceAdded, new_service)
+    this.modified = true
 
-    // Loggin information
-    this._debug_log(1, 'Added service #' + new_service.unique_id)
+    // Log information to console
+    this._debug_log(1, 'Added service #' + new_service.id)
     this._debug_log(2, new_service)
   }
 
-  bindAllChanged(callback) {
-    this.onAllChanged = callback
+  bindServiceAdded(callback) {
+    this.onServiceAdded = callback
   }
 
-  setDistance(distance) {
-    if (isNaN(distance) || distance < 0) { return }
+  //setDistance(distance) {
+  //  if (isNaN(distance) || distance < 0) { return }
 
-    this.modified = true
-    this.detailedQuote.updateAll(distance, this.services)
+  //  this.modified = true
+  //  this.detailedQuote.updateAll(distance, this.services)
 
-    this._callBack(this.onAllChanged, this.detailedQuote)
+  //  this._callBack(this.onAllChanged, this.detailedQuote)
+  //}
+
+  startNew() {
+    this.services = []
+    this.staff = []
+
+    // Usually a first visit and a pet sitting
+    this.addService()
+    this.addService()
+
+    // A new quote is considered non-modified
+    this.modified = false
   }
 }
