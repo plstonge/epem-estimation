@@ -8,14 +8,12 @@ class QuoteApp {
 
     // Bind events from Editor
     this.editor.bindNewClicked(this.handleNewClicked)
-    this.editor.bindAddServiceClicked(this.handleAddServiceClicked)
+
+    this.editor.bindServiceAddClicked(this.handleServiceAddClicked)
+    this.editor.bindServiceTypeChanged(this.handleServiceTypeChanged)
 
     // Start with a new quote
     this.quote.startNew()
-  }
-
-  handleAddServiceClicked = () => {
-    this.quote.addService()
   }
 
   handleNewClicked = () => {
@@ -25,8 +23,16 @@ class QuoteApp {
     }
   }
 
+  handleServiceAddClicked = () => {
+    this.quote.serviceAdd()
+  }
+
+  handleServiceTypeChanged = (service_id, type_id) => {
+    this.quote.serviceSetTypeID(service_id, type_id)
+  }
+
   onServiceAdded = (service) => {
-    this.editor.addService(service)
+    this.editor.serviceAdd(service)
   }
 }
 

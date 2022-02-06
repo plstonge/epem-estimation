@@ -80,8 +80,9 @@ class ServiceSelector extends HTMLDivElement {
     // The selector
     this.selector = document.createElement('select')
     this.selector.id = 'type_' + service_id
-    this.selector.classList.add('form-select')
+    this.selector.classList.add('form-select', 'service-type')
 
+    // For each pricing.js::service_types
     for (const service_type of service_types) {
       const opt = document.createElement('option')
       opt.value = service_type.id
@@ -155,8 +156,16 @@ class ServicesSection extends HTMLDivElement {
     this.services.append(newServiceEditor)
   }
 
-  bindAddServiceClicked(handle) {
+  bindAddClicked(handle) {
     this.buttonAdd.addEventListener('click', handle)
+  }
+
+  bindTypeChanged(handle) {
+    this.services.addEventListener('change', (event) => {
+      if (event.target.className === 'form-select service-type') {
+        handle(event.target.id.split('_')[1], event.target.value)
+      }
+    })
   }
 
   reset() {
@@ -283,19 +292,23 @@ class QuoteEditor {
     this.app.append(this.toolbar, this.services, this.staff, this.quote)
   }
 
-  addService(service) {
-    this.services.add(service)
-  }
-
-  bindAddServiceClicked(handle) {
-    this.services.bindAddServiceClicked(handle)
-  }
-
   bindNewClicked(handle) {
     this.toolbar.bindNewClicked(handle)
   }
 
+  bindServiceAddClicked(handle) {
+    this.services.bindAddClicked(handle)
+  }
+
+  bindServiceTypeChanged(handle) {
+    this.services.bindTypeChanged(handle)
+  }
+
   reset() {
     this.services.reset()
+  }
+
+  serviceAdd(service) {
+    this.services.add(service)
   }
 }

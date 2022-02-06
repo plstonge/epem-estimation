@@ -1,4 +1,9 @@
-const model_debug_level = 0
+function model_log(debug_level, message) {
+  const tmp_debug_level = 0
+
+  if (tmp_debug_level >= debug_level) console.log(message)
+}
+
 
 /**
  * @class EpemService
@@ -19,6 +24,13 @@ class EpemService {
     // By default, 30 minutes later
     this.until_dt = new Date(this.start_dt)
     this.until_dt.setMinutes(this.until_dt.getMinutes() + 30)
+  }
+
+  setTypeID(type_id) {
+    this.type_id = type_id
+
+    // Log information to console
+    model_log(1, 'Service[' + this.id + '].type_id == ' + this.type_id)
   }
 }
 
@@ -55,11 +67,11 @@ class Quote {
     }
   }
 
-  _debug_log(debug_level, message) {
-    if (model_debug_level >= debug_level) console.log(message)
+  bindServiceAdded(callback) {
+    this.onServiceAdded = callback
   }
 
-  addService() {
+  serviceAdd() {
     let unique_id = 0
     let type_id = 0  // Default to Initial visit
 
@@ -78,30 +90,27 @@ class Quote {
     this.modified = true
 
     // Log information to console
-    this._debug_log(1, 'Added service #' + new_service.id)
-    this._debug_log(2, new_service)
+    model_log(1, 'Added service #' + new_service.id)
+    model_log(2, new_service)
   }
 
-  bindServiceAdded(callback) {
-    this.onServiceAdded = callback
+  serviceSetTypeID(service_id, type_id) {
+    for (const service of this.services) {
+      if (service.id == service_id) {
+        service.setTypeID(type_id)
+        this.modified = true
+        break
+      }
+    }
   }
-
-  //setDistance(distance) {
-  //  if (isNaN(distance) || distance < 0) { return }
-
-  //  this.modified = true
-  //  this.detailedQuote.updateAll(distance, this.services)
-
-  //  this._callBack(this.onAllChanged, this.detailedQuote)
-  //}
 
   startNew() {
     this.services = []
     this.staff = []
 
     // Usually a first visit and a pet sitting
-    this.addService()
-    this.addService()
+    this.serviceAdd()
+    this.serviceAdd()
 
     // A new quote is considered non-modified
     this.modified = false
