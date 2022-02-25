@@ -17,7 +17,7 @@ class QuoteApp {
   }
 
   handleNewClicked = () => {
-    if (this.quote.modified && confirm(tr('Confirm_New'))) {
+    if(this.quote.modified && confirm(tr('Confirm_New'))) {
       this.editor.reset()
       this.quote.startNew()
     }
@@ -27,8 +27,8 @@ class QuoteApp {
     this.quote.serviceAdd()
   }
 
-  handleServiceTypeChanged = (service_id, type_id) => {
-    this.quote.serviceSetTypeID(service_id, type_id)
+  handleServiceTypeChanged = (serviceID, typeID) => {
+    this.quote.serviceSetTypeID(serviceID, typeID)
   }
 
   onServiceAdded = (service) => {

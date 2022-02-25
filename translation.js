@@ -1,4 +1,7 @@
-const epem_text = {
+// The default language for the interface
+var epemLang = 'fr'
+
+const epemText = {
   'Add_service': {
     'fr': 'Ajouter un service',
   },
@@ -38,16 +41,32 @@ const epem_text = {
   'Select_staff_members': {
     'fr': 'Sélection de gardiennes et gardiens',
   },
+  'Service_start_date': {
+    'fr': 'Premier jour',
+  },
+  'Service_start_hour': {
+    'fr': 'Heure de début',
+  },
+  'Service_start_minute': {
+    'fr': 'Minutes',
+  },
+  'Service_type': {
+    'fr': 'Type de service'
+  },
+  'Service_until_date': {
+    'fr': 'Dernier jour',
+  },
+  'Service_until_hour': {
+    'fr': 'Heure de fin',
+  },
+  'Service_until_minute': {
+    'fr': 'Minutes',
+  },
   'Training_dog': {
     'fr': 'Entraînement de votre chien',
   },
-  'Type_of_service': {
-    'fr': 'Type de service'
-  },
 }
 
-var epem_lang = 'fr'
-
 function tr(key) {
-  return epem_text[key][epem_lang]
+  return epemText[key][epemLang]
 }

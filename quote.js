@@ -1,7 +1,12 @@
-function model_log(debug_level, message) {
-  const tmp_debug_level = 0
+/**
+ * Logger for the model - increase debugLevel in code to get more debug info
+ * @param {*} requiredLevel - required debug level defined by caller
+ * @param {*} message - the message to print in console
+ */
+function modelLog(message, requiredLevel = 0) {
+  const debugLevel = 0  // Edit me - 0 by default
 
-  if (tmp_debug_level >= debug_level) console.log(message)
+  if(debugLevel >= requiredLevel) console.log(message)
 }
 
 
@@ -11,26 +16,32 @@ function model_log(debug_level, message) {
  * Information about one service
  */
 class EpemService {
-  constructor(unique_id, type_id=0) {
-    this.id = unique_id     // Object ID
-    this.type_id = type_id  // Service ID
+  constructor(uniqueID, typeID=0) {
+    this.id = uniqueID    // Object ID
+    this.typeID = typeID  // Service ID
 
     // By default, in 48 hours from now, round to next 15 minutes
-    this.start_dt = new Date()
-    this.start_dt.setSeconds(0)
-    this.start_dt.setMinutes(Math.ceil(this.start_dt.getMinutes() / 15) * 15)
-    this.start_dt.setDate(this.start_dt.getDate() + 2)
+    this.startDT = new Date()
+    this.startDT.setSeconds(0)
+    this.startDT.setMinutes(Math.ceil(this.startDT.getMinutes() / 15) * 15)
+    if(this.startDT.getHours() < serviceHours.start) {
+      this.startDT.setHours(serviceHours.start, 0)
+    }
+    if(this.startDT.getHours() >= serviceHours.end) {
+      this.startDT.setHours(serviceHours.end - 1, 30)
+    }
+    this.startDT.setDate(this.startDT.getDate() + 2)
 
     // By default, 30 minutes later
-    this.until_dt = new Date(this.start_dt)
-    this.until_dt.setMinutes(this.until_dt.getMinutes() + 30)
+    this.untilDT = new Date(this.startDT)
+    this.untilDT.setMinutes(this.untilDT.getMinutes() + 30)
   }
 
-  setTypeID(type_id) {
-    this.type_id = type_id
+  setTypeID(typeID) {
+    this.typeID = typeID
 
     // Log information to console
-    model_log(1, 'Service[' + this.id + '].type_id == ' + this.type_id)
+    modelLog('Service[' + this.id + '].typeID === ' + this.typeID, 1)
   }
 }
 
@@ -62,7 +73,7 @@ class Quote {
   }
 
   _callBack(callback, ...args) {
-    if (callback && (typeof callback === "function")) {
+    if(callback && (typeof callback === "function")) {
       callback(...args)
     }
   }
@@ -72,32 +83,34 @@ class Quote {
   }
 
   serviceAdd() {
-    let unique_id = 0
-    let type_id = 0  // Default to Initial visit
+    let uniqueID = 0
+    let typeID = 0  // Default to Initial visit
 
     // Compute new unique ID
-    if (this.services.length > 0) {
-      unique_id = this.services[this.services.length - 1].id + 1
+    if(this.services.length > 0) {
+      uniqueID = this.services[this.services.length - 1].id + 1
     }
 
     // Default to Pet sitting if there is already another service
-    if (this.services.length > 0) type_id = 1
+    if(this.services.length > 0) {
+      typeID = 1
+    }
 
     // Add new service
-    const new_service = new EpemService(unique_id, type_id)
-    this.services.push(new_service)
-    this._callBack(this.onServiceAdded, new_service)
+    const newService = new EpemService(uniqueID, typeID)
+    this.services.push(newService)
+    this._callBack(this.onServiceAdded, newService)
     this.modified = true
 
     // Log information to console
-    model_log(1, 'Added service #' + new_service.id)
-    model_log(2, new_service)
+    modelLog('Added service #' + newService.id, 1)
+    modelLog(newService, 2)
   }
 
-  serviceSetTypeID(service_id, type_id) {
+  serviceSetTypeID(serviceID, typeID) {
     for (const service of this.services) {
-      if (service.id == service_id) {
-        service.setTypeID(type_id)
+      if(service.id === serviceID) {
+        service.setTypeID(typeID)
         this.modified = true
         break
       }
