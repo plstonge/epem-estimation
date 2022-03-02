@@ -127,8 +127,8 @@ function createLabel(forID) {
 function createSelectorDate(dt) {
   const di = document.createElement('input')  // Date input
   di.classList.add('form-select')
-  di.setAttribute('type', 'date')
-  di.setAttribute('value', dt.toLocaleDateString())
+  di.type = 'date'
+  di.value = dt.toLocaleDateString()
   return di
 }
 
@@ -143,7 +143,7 @@ class SelectorFloatLabel extends HTMLDivElement {
     super()
 
     // Bootstrap 5 attributes
-    this.classList.add('form-floating', 'mb-1')
+    this.classList.add('form-floating')
 
     // The selector
     this.selector = document.createElement('select')
@@ -185,13 +185,31 @@ class TimePeriodEditor extends HTMLDivElement {
     this.startDate = createSelectorDate(startDT)
     this.untilDate = createSelectorDate(untilDT)
 
-    const dictDT = {
-      'start': {dateSelector: this.startDate},
-      'until': {dateSelector: this.untilDate},
+    this.startHour = new SelectorFloatLabel(
+      groupName + '_start_hour', numID, serviceHours.hours, startDT.getHours())
+    this.untilHour = new SelectorFloatLabel(
+      groupName + '_until_hour', numID, serviceHours.hours, untilDT.getHours())
+
+    this.startMinute = new SelectorFloatLabel(
+      groupName + '_start_minute', numID, serviceHours.minutes, startDT.getMinutes())
+    this.untilMinute = new SelectorFloatLabel(
+      groupName + '_until_minute', numID, serviceHours.minutes, untilDT.getMinutes())
+
+      const dictDT = {
+      'start': {
+        dateSelector: this.startDate,
+        hourSelector: this.startHour,
+        minuteSelector: this.startMinute,
+      },
+      'until': {
+        dateSelector: this.untilDate,
+        hourSelector: this.untilHour,
+        minuteSelector: this.untilMinute,
+      },
     }
 
     // Display date selectors in a row
-    const divRowDates = createDivRow('g-1')  // g == spacing between columns
+    const divRowDates = createDivRow('g-1', 'mb-1')  // g == spacing between columns
 
     for (const [startUntil, dt] of Object.entries(dictDT)) {
       const className = groupName + '_' + startUntil + '_date'
@@ -203,10 +221,24 @@ class TimePeriodEditor extends HTMLDivElement {
 
       divRowDates.append(
         createDivCol(
-          createDivFloat(dt.dateSelector, dateLabel), 'col-6', '2.5in'))
+          createDivFloat(dt.dateSelector, dateLabel), 'col-6', '1.75in'))
     }
 
     this.append(divRowDates)
+
+    // Display time selectors in a row
+    const divRowTimes = createDivRow('g-1')  // g == spacing between columns
+
+    for (const [startUntil, dt] of Object.entries(dictDT)) {
+      const divRowHourMinute = createDivRow('g-1')
+      divRowHourMinute.append(
+        createDivCol(dt.hourSelector, 'col-7'),
+        createDivCol(dt.minuteSelector, 'col-5'),
+      )
+      divRowTimes.append(createDivCol(divRowHourMinute, 'col-6', '2.625in'))
+    }
+
+    this.append(divRowTimes)
   }
 }
 customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' })
@@ -230,6 +262,7 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     // Drop-down type selector
     const typeSelector = new SelectorFloatLabel(
       groupName + '_type', service.id, serviceTypes, service.typeID)
+    typeSelector.classList.add('mb-1')
 
     // Start/Until Date/Time selectors
     const timePeriod = new TimePeriodEditor(
