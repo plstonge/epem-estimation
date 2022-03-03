@@ -17,32 +17,20 @@ const serviceTypes = [
 const serviceHours = {
   start: 6,
   end: 22,
-  hours: [
-    {id: 6, name: '06 h'},
-    {id: 7, name: '07 h'},
-    {id: 8, name: '08 h'},
-    {id: 9, name: '09 h'},
-    {id: 10, name: '10 h'},
-    {id: 11, name: '11 h'},
-    {id: 12, name: '12 h'},
-    {id: 13, name: '13 h'},
-    {id: 14, name: '14 h'},
-    {id: 15, name: '15 h'},
-    {id: 16, name: '16 h'},
-    {id: 17, name: '17 h'},
-    {id: 18, name: '18 h'},
-    {id: 19, name: '19 h'},
-    {id: 20, name: '20 h'},
-    {id: 21, name: '21 h'},
-    {id: 22, name: '22 h'},
-  ],
-  minutes: [
-    {id: 0, name: '00 m'},
-    {id: 15, name: '15 m'},
-    {id: 30, name: '30 m'},
-    {id: 45, name: '45 m'},
-  ],
+  times: [],
 }
+for (let hour = serviceHours.start; hour < serviceHours.end; hour++) {
+  for (let minutes = 0; minutes < 60; minutes += 15) {
+    serviceHours.times.push({
+      id: hour * 60 + minutes,
+      name: hour.toString() + ':' + minutes.toString().padStart(2, '0')
+    })
+  }
+}
+serviceHours.times.push({
+  id: serviceHours.end * 60, name: serviceHours.end.toString() + ':00'
+})
+
 
 const pricing = [
   {

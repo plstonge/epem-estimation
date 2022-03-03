@@ -1,4 +1,4 @@
-# Formulaire de soumission - Entre Pattes & Mains
+# Formulaire pour estimé de services - EPEM
 
-* [Formulaire de soumission](https://plstonge.github.io/epem-soumission/)
+* [Formulaire pour estimé de services](https://plstonge.github.io/epem-estimation/)
 * [Tarification et informations](https://entrepattesetmains.com/informations-utiles/)

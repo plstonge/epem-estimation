@@ -9,7 +9,7 @@ const epemText = {
     'fr': 'Ramener la ou les clés',
   },
   'Confirm_New': {
-    'fr': 'Créer une nouvelle soumission détruira la soumission actuelle. Voulez-vous vraiment recommencer à neuf?'
+    'fr': "Créer une nouvelle estimation détruira l'estimation actuelle. Voulez-vous vraiment recommencer à neuf?",
   },
   'Distance_to_destination': {
     'fr': "Distance de transport à l'aller :",
@@ -18,7 +18,7 @@ const epemText = {
     'fr': 'Visite initiale',
   },
   'New_quote': {
-    'fr': 'Nouvelle soumission',
+    'fr': 'Nouvelle estimation',
   },
   'Pet_sitting': {
     'fr': 'Gardiennage à votre domicile',
@@ -44,11 +44,8 @@ const epemText = {
   'Service_start_date': {
     'fr': 'Premier jour',
   },
-  'Service_start_hour': {
+  'Service_start_time': {
     'fr': 'Heure de début',
-  },
-  'Service_start_minute': {
-    'fr': 'Minutes',
   },
   'Service_type': {
     'fr': 'Type de service'
@@ -56,11 +53,8 @@ const epemText = {
   'Service_until_date': {
     'fr': 'Dernier jour',
   },
-  'Service_until_hour': {
+  'Service_until_time': {
     'fr': 'Heure de fin',
-  },
-  'Service_until_minute': {
-    'fr': 'Minutes',
   },
   'Training_dog': {
     'fr': 'Entraînement de votre chien',

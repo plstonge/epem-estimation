@@ -17,7 +17,7 @@ class QuoteApp {
   }
 
   handleNewClicked = () => {
-    if(this.quote.modified && confirm(tr('Confirm_New'))) {
+    if (this.quote.modified && confirm(tr('Confirm_New'))) {
       this.editor.reset()
       this.quote.startNew()
     }

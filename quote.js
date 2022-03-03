@@ -6,7 +6,7 @@
 function modelLog(message, requiredLevel = 0) {
   const debugLevel = 0  // Edit me - 0 by default
 
-  if(debugLevel >= requiredLevel) console.log(message)
+  if (debugLevel >= requiredLevel) console.log(message)
 }
 
 
@@ -24,10 +24,10 @@ class EpemService {
     this.startDT = new Date()
     this.startDT.setSeconds(0)
     this.startDT.setMinutes(Math.ceil(this.startDT.getMinutes() / 15) * 15)
-    if(this.startDT.getHours() < serviceHours.start) {
+    if (this.startDT.getHours() < serviceHours.start) {
       this.startDT.setHours(serviceHours.start, 0)
     }
-    if(this.startDT.getHours() >= serviceHours.end) {
+    if (this.startDT.getHours() >= serviceHours.end) {
       this.startDT.setHours(serviceHours.end - 1, 30)
     }
     this.startDT.setDate(this.startDT.getDate() + 2)
@@ -73,7 +73,7 @@ class Quote {
   }
 
   _callBack(callback, ...args) {
-    if(callback && (typeof callback === "function")) {
+    if (callback && (typeof callback === "function")) {
       callback(...args)
     }
   }
@@ -87,12 +87,12 @@ class Quote {
     let typeID = 0  // Default to Initial visit
 
     // Compute new unique ID
-    if(this.services.length > 0) {
+    if (this.services.length > 0) {
       uniqueID = this.services[this.services.length - 1].id + 1
     }
 
     // Default to Pet sitting if there is already another service
-    if(this.services.length > 0) {
+    if (this.services.length > 0) {
       typeID = 1
     }
 
@@ -109,7 +109,7 @@ class Quote {
 
   serviceSetTypeID(serviceID, typeID) {
     for (const service of this.services) {
-      if(service.id === serviceID) {
+      if (service.id === serviceID) {
         service.setTypeID(typeID)
         this.modified = true
         break
