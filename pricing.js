@@ -5,13 +5,11 @@ const distanceProperties = {
 }
 
 const serviceTypes = [
-  {id: 0, name: tr('Initial_visit')},
   {id: 1, name: tr('Pet_sitting')},
   {id: 2, name: tr('Pet_walk')},
   {id: 3, name: tr('Pet_transport')},
   {id: 4, name: tr('Pet_treatment')},
   {id: 5, name: tr('Training_dog')},
-  {id: 99, name: tr('Bringing_key')},
 ]
 
 const serviceHours = {
@@ -66,10 +64,9 @@ const pricing = [
         '01': ['01', '02', '03'],  // Jour de l'an
       },
     },
+    initialVisit: 20.00,
+    returningKey: 0.00,
     services: {
-      0: {  // Initial_visit
-        halfHour: {low: 20.00, high: 20.00}, fullHour: {low: 20.00, high: 20.00}, xtraHour:  0.00,
-      },
       1: {  // Pet_sitting
         halfHour: {low: 28.00, high: 33.00}, fullHour: {low: 49.00, high: 55.00}, xtraHour: 20.00,
       },
@@ -84,9 +81,6 @@ const pricing = [
       },
       5: {  // Training_dog
         halfHour: {low: 28.00, high: 33.00}, fullHour: {low: 49.00, high: 55.00}, xtraHour: 35.00,
-      },
-      99: {  // Bringing_key
-        halfHour: {low:  0.00, high:  0.00}, fullHour: {low:  0.00, high:  0.00}, xtraHour:  0.00,
       },
     },
     transportFee: {

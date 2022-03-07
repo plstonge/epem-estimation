@@ -66,6 +66,21 @@ customElements.define('tool-bar', ToolBar, { extends: 'div' })
 
 
 /**
+ * Create a checkbox
+ * @param {*} id - the checkbox DOM id
+ * @returns the checkbox
+ */
+function createCheckbox(id, checked=false) {
+  const cb = document.createElement('input')
+  cb.type = 'checkbox'
+  cb.classList.add('form-check-input')
+  cb.id = id
+  cb.checked = checked
+  return cb
+}
+
+
+/**
  * Creates a div object with a 'col*' class and a minimum width value
  * @param {*} child - input object or another div
  * @param {*} colClass - 'col' default column class
@@ -112,9 +127,10 @@ function createDivRow(...classes) {
  * @param {*} forID - id of object to be labeled
  * @returns the label object
  */
-function createLabel(forID) {
+function createLabel(forID, textContent) {
   const label = document.createElement('label')
   label.setAttribute('for', forID)
+  label.textContent = textContent
   return label
 }
 
@@ -131,6 +147,30 @@ function createSelectorDate(dt) {
   di.value = dt.toLocaleDateString()
   return di
 }
+
+
+/**
+ * @class SwitchWithLabel
+ *
+ * Checkbox (switch) input with a label
+ */
+class SwitchWithLabel extends HTMLDivElement {
+  constructor(id, textContent=tr(id), checked=true) {
+    super()
+
+    // Bootstrap 5 attributes
+    this.classList.add('form-check', 'form-switch', 'my-4')
+
+    // Create the checkbox and its label
+    this.checkbox = createCheckbox(id, checked)
+
+    const label = createLabel(id, textContent)
+    label.classList.add('form-check-label')
+
+    this.append(this.checkbox, label)
+  }
+}
+customElements.define('switch-with-label', SwitchWithLabel, { extends: 'div' })
 
 
 /**
@@ -160,8 +200,7 @@ class SelectorFloatLabel extends HTMLDivElement {
     this.selector.value = defaultOptionID
 
     // Label before the selector
-    const label = createLabel(this.selector.id)
-    label.textContent = tr(groupName)
+    const label = createLabel(this.selector.id, tr(groupName))
 
     this.append(this.selector, label)
   }
@@ -243,7 +282,7 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     this.id = groupName + '.' + service.id
 
     // Bootstrap 5 attributes
-    this.classList.add('border', 'mb-1', 'p-1', 'rounded')
+    this.classList.add('border', 'mb-3', 'p-1', 'rounded')
 
     // Drop-down type selector
     const typeSelector = new SelectorFloatLabel(
@@ -273,6 +312,14 @@ class ServicesSection extends HTMLDivElement {
     const title = document.createElement('h2')
     title.textContent = tr('Select_services')
 
+    // One-shot services
+    this.initialVisit = new SwitchWithLabel('Initial_visit')
+    this.returningKey = new SwitchWithLabel('Returning_key')
+
+    const divOneShotServices = document.createElement('div')
+    divOneShotServices.classList.add('border', 'mb-3', 'px-4', 'rounded')
+    divOneShotServices.append(this.initialVisit, this.returningKey)
+
     // List of services - empty div
     this.services = document.createElement('div')
 
@@ -283,7 +330,7 @@ class ServicesSection extends HTMLDivElement {
     this.buttonAdd.textContent = tr('Add_service')
 
     // Append all
-    this.append(title, this.services, this.buttonAdd)
+    this.append(title, divOneShotServices, this.services, this.buttonAdd)
   }
 
   add(service) {
@@ -306,6 +353,9 @@ class ServicesSection extends HTMLDivElement {
   }
 
   reset() {
+    this.initialVisit.checkbox.checked = true
+    this.returningKey.checkbox.checked = true
+
     while (this.services.firstChild) {
       this.services.removeChild(this.services.firstChild)
     }
@@ -423,10 +473,10 @@ class QuoteEditor {
 
     this.toolbar = new ToolBar()
     this.services = new ServicesSection()
-    this.staff = new StaffSection()
-    this.quote = new QuoteSection()
+    //this.staff = new StaffSection()
+    //this.quote = new QuoteSection()
 
-    this.app.append(this.toolbar, this.services, this.staff, this.quote)
+    this.app.append(this.toolbar, this.services)
   }
 
   bindNewClicked(handle) {

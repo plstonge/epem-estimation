@@ -84,16 +84,11 @@ class Quote {
 
   serviceAdd() {
     let uniqueID = 0
-    let typeID = 0  // Default to Initial visit
+    let typeID = 1  // Default to Pet Sitting
 
     // Compute new unique ID
     if (this.services.length > 0) {
       uniqueID = this.services[this.services.length - 1].id + 1
-    }
-
-    // Default to Pet sitting if there is already another service
-    if (this.services.length > 0) {
-      typeID = 1
     }
 
     // Add new service
@@ -118,11 +113,13 @@ class Quote {
   }
 
   startNew() {
+    // Reset the internal data
+    this.initialVisit = true
+    this.returningKey = true
     this.services = []
     this.staff = []
 
-    // Usually a first visit and a pet sitting
-    this.serviceAdd()
+    // Add one service
     this.serviceAdd()
 
     // A new quote is considered non-modified

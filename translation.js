@@ -3,10 +3,7 @@ var epemLang = 'fr'
 
 const epemText = {
   'Add_service': {
-    'fr': 'Ajouter un service',
-  },
-  'Bringing_key': {
-    'fr': 'Ramener la ou les clés',
+    'fr': '+ Ajouter un service',
   },
   'Confirm_New': {
     'fr': "Créer une nouvelle estimation détruira l'estimation actuelle. Voulez-vous vraiment recommencer à neuf?",
@@ -15,7 +12,7 @@ const epemText = {
     'fr': "Distance de transport à l'aller :",
   },
   'Initial_visit': {
-    'fr': 'Visite initiale',
+    'fr': 'Visite initiale (obligatoire pour les nouveaux clients ou après un déménagement)',
   },
   'New_quote': {
     'fr': 'Nouvelle estimation',
@@ -35,8 +32,11 @@ const epemText = {
   'Quote': {
     'fr': 'Soumission',
   },
+  'Returning_key': {
+    'fr': 'Visite finale (frais de transport pour ramener la ou les clés)',
+  },
   'Select_services': {
-    'fr': 'Sélection de services',
+    'fr': 'Sélection des services',
   },
   'Select_staff_members': {
     'fr': 'Sélection de gardiennes et gardiens',
