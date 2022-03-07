@@ -1,21 +1,36 @@
 /**
- * @class ToolBarButton
- *
- * Button for tool-bars
+ * Create a generic button with classes
+ * @param {*} textContent - text on button
+ * @param  {...any} classes - CSS classes
+ * @returns the button object
  */
-class ToolBarButton extends HTMLButtonElement {
-  constructor(textContent) {
-    super()
-
-    // Bootstrap 5 attributes
-    this.classList.add('btn', 'btn-secondary')
-    this.setAttribute('type', 'button')
-
-    // Displayed text
-    this.textContent = textContent
-  }
+function createButton(textContent, ...classes) {
+  const button = document.createElement('button')
+  button.setAttribute('type', 'button')
+  button.textContent = textContent
+  button.classList.add(...classes)
+  return button
 }
-customElements.define('toolbar-button', ToolBarButton, { extends: 'button' })
+
+
+/**
+ * Create an action button
+ * @param {*} textContent - text on button
+ * @returns the action button object
+ */
+function createButtonAction(textContent) {
+  return createButton(textContent, 'btn', 'btn-secondary')
+}
+
+
+/**
+ * Create a critical button
+ * @param {*} textContent - text on button
+ * @returns the critical button object
+ */
+function createButtonCritical(textContent) {
+  return createButton(textContent, 'btn', 'btn-danger')
+}
 
 
 /**
@@ -52,7 +67,7 @@ class ToolBar extends HTMLDivElement {
 
     // Button group for the New button
     this.groupNew = new ToolBarGroup('group_new')
-    this.buttonNew = new ToolBarButton(tr('New_quote'))
+    this.buttonNew = createButtonAction(tr('New_quote'))
 
     this.groupNew.append(this.buttonNew)
     this.append(this.groupNew)
@@ -284,6 +299,12 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     // Bootstrap 5 attributes
     this.classList.add('border', 'mb-3', 'p-1', 'rounded')
 
+    // Type de service - Durée
+    // Premier jour - Dernier jour - Fréquence
+
+    // [ ] Service #x - [Dupliquer] - [Supprimer]
+    const controlRow = createDivRow()
+
     // Drop-down type selector
     const typeSelector = new SelectorFloatLabel(
       groupName + '_type', service.id, serviceTypes, service.typeID)
@@ -293,7 +314,7 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     const timePeriod = new TimePeriodEditor(
       groupName, service.id, service.startDT, service.untilDT)
 
-    this.append(typeSelector, timePeriod)
+    this.append(controlRow, typeSelector, timePeriod)
   }
 }
 customElements.define('service-editor', ServiceEditor, { extends: 'div' })
@@ -324,10 +345,7 @@ class ServicesSection extends HTMLDivElement {
     this.services = document.createElement('div')
 
     // Add button
-    this.buttonAdd = document.createElement('button')
-    this.buttonAdd.classList.add('btn', 'btn-secondary')
-    this.buttonAdd.setAttribute('type', 'button')
-    this.buttonAdd.textContent = tr('Add_service')
+    this.buttonAdd = createButtonAction(tr('Add_service'))
 
     // Append all
     this.append(title, divOneShotServices, this.services, this.buttonAdd)
