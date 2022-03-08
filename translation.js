@@ -8,8 +8,14 @@ const epemText = {
   'Confirm_New': {
     'fr': "Créer une nouvelle estimation détruira l'estimation actuelle. Voulez-vous vraiment recommencer à neuf?",
   },
+  'Delete': {
+    'fr': "X Supprimer",
+  },
   'Distance_to_destination': {
     'fr': "Distance de transport à l'aller :",
+  },
+  'Duplicate': {
+    'fr': "** Dupliquer",
   },
   'Initial_visit': {
     'fr': 'Visite initiale (obligatoire pour les nouveaux clients ou après un déménagement)',
@@ -48,7 +54,7 @@ const epemText = {
     'fr': 'Heure de début',
   },
   'Service_type': {
-    'fr': 'Type de service'
+    'fr': 'Type de service',
   },
   'Service_until_date': {
     'fr': 'Dernier jour',

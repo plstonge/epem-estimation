@@ -34,21 +34,17 @@ function createButtonCritical(textContent) {
 
 
 /**
- * @class ToolBarGroup
- *
- * Group of buttons in a tool-bar
+ * Creates a tool-bar group
+ * @param {*} name - tool-bar group name
+ * @returns the tool-bar group
  */
-class ToolBarGroup extends HTMLDivElement {
-  constructor(name) {
-    super()
-
-    // Bootstrap 5 attributes
-    this.classList.add('btn-group')
-    this.setAttribute('role', 'group')
-    this.setAttribute('aria-label', name)
-  }
+function createToolBarGroup(name) {
+  const tbg = document.createElement('div')
+  tbg.classList.add('btn-group')
+  tbg.setAttribute('role', 'group')
+  tbg.setAttribute('aria-label', name)
+  return tbg
 }
-customElements.define('toolbar-group', ToolBarGroup, { extends: 'div' })
 
 
 /**
@@ -65,12 +61,14 @@ class ToolBar extends HTMLDivElement {
     this.setAttribute('role', 'toolbar')
     this.setAttribute('aria-label', 'Toolbar with button groups')
 
-    // Button group for the New button
-    this.groupNew = new ToolBarGroup('group_new')
+    // New button in a group
     this.buttonNew = createButtonAction(tr('New_quote'))
 
-    this.groupNew.append(this.buttonNew)
-    this.append(this.groupNew)
+    const groupNew = createToolBarGroup('group_new')
+    groupNew.append(this.buttonNew)
+
+    // Append groups to tool-bar
+    this.append(groupNew)
   }
 
   bindNewClicked(handle) {
@@ -165,16 +163,16 @@ function createSelectorDate(dt) {
 
 
 /**
- * @class SwitchWithLabel
+ * @class CheckboxWithLabel
  *
- * Checkbox (switch) input with a label
+ * Checkbox input with a label
  */
-class SwitchWithLabel extends HTMLDivElement {
-  constructor(id, textContent=tr(id), checked=true) {
+class CheckboxWithLabel extends HTMLDivElement {
+  constructor(id, textContent, checked) {
     super()
 
     // Bootstrap 5 attributes
-    this.classList.add('form-check', 'form-switch', 'my-4')
+    this.classList.add('form-check')
 
     // Create the checkbox and its label
     this.checkbox = createCheckbox(id, checked)
@@ -185,7 +183,21 @@ class SwitchWithLabel extends HTMLDivElement {
     this.append(this.checkbox, label)
   }
 }
-customElements.define('switch-with-label', SwitchWithLabel, { extends: 'div' })
+customElements.define('checkbox-with-label', CheckboxWithLabel, { extends: 'div' })
+
+
+/**
+ * Create a switch with a label from CheckboxWithLabel
+ * @param {*} id - Object ID
+ * @param {*} textContent - Label text
+ * @param {*} checked - true if switched on
+ * @returns a CheckboxWithLabel with a switch
+ */
+function createSwitchWithLabel(id, textContent=tr(id), checked=true) {
+  const swl = new CheckboxWithLabel(id, textContent, checked)
+  swl.classList.add('form-switch', 'my-4')
+  return swl
+}
 
 
 /**
@@ -221,6 +233,42 @@ class SelectorFloatLabel extends HTMLDivElement {
   }
 }
 customElements.define('selector-float-label', SelectorFloatLabel, { extends: 'div' })
+
+
+/**
+ * @class ServiceToolBar
+ *
+ * Service selector for duplication or deletion
+ */
+class ServiceToolBar extends HTMLDivElement {
+  constructor(groupName, numID) {
+    super()
+
+    // Bootstrap 5 classes: margin-bottom-1
+    this.classList.add('row', 'm-0', 'mb-1', 'px-2', 'py-1')
+
+    this.selector = new CheckboxWithLabel(
+      groupName, 'Service #' + (numID + 1), false)
+    this.selector.classList.add('my-1', 'pt-2')
+
+    this.buttonDuplicate = createButtonAction(tr('Duplicate'))
+    this.buttonDuplicate.disabled = !this.selector.checkbox.checked
+
+    this.buttonDelete = createButtonCritical(tr('Delete'))
+    this.buttonDelete.disabled = !this.selector.checkbox.checked
+
+    const buttonRow = createDivRow()
+    buttonRow.classList.add('mt-1', 'pb-1')
+    buttonRow.append(
+      createDivCol(this.buttonDuplicate, 'col', '1.5in'),
+      createDivCol(this.buttonDelete, 'col', '1.5in'))
+
+    this.append(
+      createDivCol(this.selector, 'col-2', '1.5in'),
+      createDivCol(buttonRow, 'col-4', '3.25in'))
+  }
+}
+customElements.define('service-tool-bar', ServiceToolBar, { extends: 'div' })
 
 
 /**
@@ -297,24 +345,21 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     this.id = groupName + '.' + service.id
 
     // Bootstrap 5 attributes
-    this.classList.add('border', 'mb-3', 'p-1', 'rounded')
+    this.classList.add('border', 'rounded', 'mb-3', 'p-1')
 
-    // Type de service - Durée
-    // Premier jour - Dernier jour - Fréquence
+    // [ ] Service #x - [Duplicate] - [Delete]
+    const toolBar = new ServiceToolBar(groupName + '_select', service.id)
 
-    // [ ] Service #x - [Dupliquer] - [Supprimer]
-    const controlRow = createDivRow()
-
-    // Drop-down type selector
+    // Type of service - Duration (hh:mm)
     const typeSelector = new SelectorFloatLabel(
       groupName + '_type', service.id, serviceTypes, service.typeID)
     typeSelector.classList.add('mb-1')
 
-    // Start/Until Date/Time selectors
+    // First day - Last day - Frequency
     const timePeriod = new TimePeriodEditor(
       groupName, service.id, service.startDT, service.untilDT)
 
-    this.append(controlRow, typeSelector, timePeriod)
+    this.append(toolBar, typeSelector, timePeriod)
   }
 }
 customElements.define('service-editor', ServiceEditor, { extends: 'div' })
@@ -334,8 +379,8 @@ class ServicesSection extends HTMLDivElement {
     title.textContent = tr('Select_services')
 
     // One-shot services
-    this.initialVisit = new SwitchWithLabel('Initial_visit')
-    this.returningKey = new SwitchWithLabel('Returning_key')
+    this.initialVisit = createSwitchWithLabel('Initial_visit')
+    this.returningKey = createSwitchWithLabel('Returning_key')
 
     const divOneShotServices = document.createElement('div')
     divOneShotServices.classList.add('border', 'mb-3', 'px-4', 'rounded')
