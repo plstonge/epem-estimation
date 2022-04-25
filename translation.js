@@ -17,26 +17,47 @@ const epemText = {
   'Duplicate': {
     'fr': "** Dupliquer",
   },
+  'Freq_12h': {
+    'fr': "Deux fois (2x) par jour",
+  },
+  'Freq_1d': {
+    'fr': "Une fois par jour",
+  },
+  'Freq_2d': {
+    'fr': "Une fois aux deux (2) jours",
+  },
+  'Freq_3d': {
+    'fr': "Une fois aux trois (3) jours",
+  },
+  'Freq_1w': {
+    'fr': "Une fois aux sept (7) jours",
+  },
+  'Freq_2w': {
+    'fr': "Une fois aux 14 jours",
+  },
+  'Freq_1m': {
+    'fr': "Une fois aux 30 jours",
+  },
   'Initial_visit': {
     'fr': 'Visite initiale (obligatoire pour les nouveaux clients ou après un déménagement)',
   },
   'New_quote': {
-    'fr': 'Nouvelle estimation',
+    'fr': 'Nouvelle facturation',
   },
-  'Pet_sitting': {
-    'fr': 'Gardiennage à votre domicile',
+  'Type_dog_training': {
+    'fr': 'Entraînement du chien',
   },
-  'Pet_transport': {
+  'Type_sitting': {
+    'fr': 'Gardiennage',
+  },
+  'Type_transport': {
     'fr': 'Accompagnement et transport',
   },
-  'Pet_treatment': {
+  'Type_treatment': {
     'fr': 'Soins sur demande',
   },
-  'Pet_walk': {
-    'fr': 'Promenade pour votre animal',
-  },
-  'Quote': {
-    'fr': 'Soumission',
+  'Type_walk': {
+    'fr': 'Promenade',
   },
   'Returning_key': {
     'fr': 'Visite finale (frais de transport pour ramener la ou les clés)',
@@ -47,23 +68,20 @@ const epemText = {
   'Select_staff_members': {
     'fr': 'Sélection de gardiennes et gardiens',
   },
+  'Service_duration': {
+    'fr': 'Durée (h:mm)',
+  },
+  'Service_frequency': {
+    'fr': 'Fréquence',
+  },
   'Service_start_date': {
     'fr': 'Premier jour',
-  },
-  'Service_start_time': {
-    'fr': 'Heure de début',
   },
   'Service_type': {
     'fr': 'Type de service',
   },
   'Service_until_date': {
     'fr': 'Dernier jour',
-  },
-  'Service_until_time': {
-    'fr': 'Heure de fin',
-  },
-  'Training_dog': {
-    'fr': 'Entraînement de votre chien',
   },
 }
 

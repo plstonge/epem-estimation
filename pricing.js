@@ -1,39 +1,48 @@
 const distanceProperties = {
   min: 0,
   max: 400,
-  default: 0,
+  default: 10,
 }
-
-const serviceTypes = [
-  {id: 1, name: tr('Pet_sitting')},
-  {id: 2, name: tr('Pet_walk')},
-  {id: 3, name: tr('Pet_transport')},
-  {id: 4, name: tr('Pet_treatment')},
-  {id: 5, name: tr('Training_dog')},
-]
 
 const serviceHours = {
   start: 6,
   end: 22,
-  times: [],
 }
-for (let hour = serviceHours.start; hour < serviceHours.end; hour++) {
-  for (let minutes = 0; minutes < 60; minutes += 15) {
-    serviceHours.times.push({
-      id: hour * 60 + minutes,
-      name: hour.toString() + ':' + minutes.toString().padStart(2, '0')
-    })
-  }
-}
-serviceHours.times.push({
-  id: serviceHours.end * 60, name: serviceHours.end.toString() + ':00'
-})
 
+const serviceTypes = [
+  {id: 1, name: tr('Type_sitting')},
+  {id: 2, name: tr('Type_walk')},
+  {id: 3, name: tr('Type_transport')},
+  {id: 4, name: tr('Type_treatment')},
+  {id: 5, name: tr('Type_dog_training')},
+]
+
+const serviceDurations = []
+for (let duration = 30;
+     duration <= (serviceHours.end - serviceHours.start) * 60;
+     duration += 15) {
+  const hours = Math.trunc(duration / 60)
+  const minutes = duration % 60
+  serviceDurations.push({
+    id: duration,
+    name: hours.toString() + ':' + minutes.toString().padStart(2, '0')
+  })
+}
+
+const serviceFreqs = [
+  {id: 12, name: tr('Freq_12h')},
+  {id: 24, name: tr('Freq_1d')},
+  {id: 48, name: tr('Freq_2d')},
+  {id: 72, name: tr('Freq_3d')},
+  {id: 168, name: tr('Freq_1w')},
+  {id: 336, name: tr('Freq_2w')},
+  {id: 720, name: tr('Freq_1m')},
+]
 
 const pricing = [
   {
     validPeriod: {
-      firstDay: new Date('2022-01-01T00:00:00'),
+      firstDay: new Date('2022-03-01T00:00:00'),
        lastDay: new Date('2023-01-31T23:59:59'),
     },
     highSeason: [

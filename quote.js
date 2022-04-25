@@ -16,25 +16,15 @@ function modelLog(message, requiredLevel = 0) {
  * Information about one service
  */
 class EpemService {
-  constructor(uniqueID, typeID=0) {
+  constructor(uniqueID, typeID) {
     this.id = uniqueID    // Object ID
     this.typeID = typeID  // Service ID
 
-    // By default, in 48 hours from now, round to next 15 minutes
-    this.startDT = new Date()
-    this.startDT.setSeconds(0)
-    this.startDT.setMinutes(Math.ceil(this.startDT.getMinutes() / 15) * 15)
-    if (this.startDT.getHours() < serviceHours.start) {
-      this.startDT.setHours(serviceHours.start, 0)
-    }
-    if (this.startDT.getHours() >= serviceHours.end) {
-      this.startDT.setHours(serviceHours.end - 1, 30)
-    }
-    this.startDT.setDate(this.startDT.getDate() + 2)
+    this.duration = 30  // 30 minutes
+    this.freqID = 24    // Once a day
 
-    // By default, 30 minutes later
-    this.untilDT = new Date(this.startDT)
-    this.untilDT.setMinutes(this.untilDT.getMinutes() + 30)
+    this.startDT = new Date()  // Today
+    this.untilDT = new Date()  // Today
   }
 
   setTypeID(typeID) {
@@ -47,29 +37,12 @@ class EpemService {
 
 
 /**
- * @class DetailedQuote
- *
- * Computed detailed quote - per day services and cost
- */
-class DetailedQuote {
-  constructor() {
-    this.distance = 0.0
-  }
-
-  updateAll(distance, services) {
-    this.distance = distance
-  }
-}
-
-
-/**
  * @class Quote
  *
  * Main quote class - managing service queries
  */
 class Quote {
   constructor() {
-    this.detailedQuote = new DetailedQuote()
   }
 
   _callBack(callback, ...args) {
@@ -83,8 +56,8 @@ class Quote {
   }
 
   serviceAdd() {
-    let uniqueID = 0
-    let typeID = 1  // Default to Pet Sitting
+    let uniqueID = 1
+    let typeID = 1  // Default is Pet Sitting
 
     // Compute new unique ID
     if (this.services.length > 0) {
@@ -114,10 +87,9 @@ class Quote {
 
   startNew() {
     // Reset the internal data
-    this.initialVisit = true
-    this.returningKey = true
+    this.initialVisit = false
+    this.returningKey = false
     this.services = []
-    this.staff = []
 
     // Add one service
     this.serviceAdd()

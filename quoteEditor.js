@@ -244,11 +244,11 @@ class ServiceToolBar extends HTMLDivElement {
   constructor(groupName, numID) {
     super()
 
-    // Bootstrap 5 classes: margin-bottom-1
-    this.classList.add('row', 'm-0', 'mb-1', 'px-2', 'py-1')
+    // Bootstrap 5 classes
+    this.classList.add('row', 'm-0', 'px-2', 'py-1')
 
     this.selector = new CheckboxWithLabel(
-      groupName, 'Service #' + (numID + 1), false)
+      groupName + '_select', groupName + ' #' + numID, false)
     this.selector.classList.add('my-1', 'pt-2')
 
     this.buttonDuplicate = createButtonAction(tr('Duplicate'))
@@ -272,64 +272,56 @@ customElements.define('service-tool-bar', ServiceToolBar, { extends: 'div' })
 
 
 /**
- * @class TimePeriodEditor
+ * @class ServiceSpec
  *
- * Time Period Editor
+ * Service specification editor
+ * Type of service - Duration (hh:mm) - Frequency - First day - Last day
  */
-class TimePeriodEditor extends HTMLDivElement {
-  constructor(groupName, numID, startDT, untilDT) {
+class ServiceSpec extends HTMLDivElement {
+  constructor(groupName, service) {
     super()
 
-    // Bootstrap 5 classes: margin-bottom-1
-    this.classList.add('row', 'mb-1', 'g-1')
+    // Bootstrap 5 classes
+    this.classList.add('row', 'g-1')
 
-    // Main objects gathered in a dictionary
-    this.startDate = createSelectorDate(startDT)
-    this.untilDate = createSelectorDate(untilDT)
+    // Main specification selectors
+    this.type = new SelectorFloatLabel(
+      groupName + '_type', service.id, serviceTypes, service.typeID)
 
-    this.startTime = new SelectorFloatLabel(
-      groupName + '_start_time', numID,
-      serviceHours.times.slice(0, -2),  // All times until 21:30
-      startDT.getHours() * 60 + startDT.getMinutes())
-    this.untilTime = new SelectorFloatLabel(
-      groupName + '_until_time', numID,
-      serviceHours.times.slice(2),  // All times from 6:30
-      untilDT.getHours() * 60 + untilDT.getMinutes())
+    this.duration = new SelectorFloatLabel(
+      groupName + '_duration', service.id, serviceDurations, service.duration)
 
-    const dictDT = {
-      'start': {dateSelector: this.startDate, timeSelector: this.startTime},
-      'until': {dateSelector: this.untilDate, timeSelector: this.untilTime},
-    }
+    this.frequency = new SelectorFloatLabel(
+      groupName + '_frequency', service.id, serviceFreqs, service.freqID)
 
-    // Display date selectors in a row
+    this.startDate = createSelectorDate(service.startDT)
+    this.untilDate = createSelectorDate(service.untilDT)
+
+    // Display date selectors as a group in a div row
+    const dictDates = {'start': this.startDate, 'until': this.untilDate}
     const divRowDates = createDivRow('g-1')  // g == spacing between columns
 
-    for (const [startUntil, dt] of Object.entries(dictDT)) {
+    for (const [startUntil, dt] of Object.entries(dictDates)) {
       const className = groupName + '_' + startUntil + '_date'
-      dt.dateSelector.id = className + '.' + numID
-      dt.dateSelector.classList.add(className)
+      dt.id = className + '.' + service.id
+      dt.classList.add(className)
 
-      const dateLabel = createLabel(dt.dateSelector.id)
+      const dateLabel = createLabel(dt.id)
       dateLabel.textContent = tr(className)
 
-      divRowDates.append(
-        createDivCol(
-          createDivFloat(dt.dateSelector, dateLabel)))
-    }
-
-    // Display time selectors in a row
-    const divRowTimes = createDivRow('g-1')  // g == spacing between columns
-
-    for (const [startUntil, dt] of Object.entries(dictDT)) {
-      divRowTimes.append(createDivCol(dt.timeSelector))
+      divRowDates.append(createDivCol(
+        createDivFloat(dt, dateLabel), 'col', '1.6in'))
     }
 
     this.append(
-      createDivCol(divRowDates, 'col', '3.25in'),
-      createDivCol(divRowTimes, 'col', '3.25in'))
+      createDivCol(this.type, 'col', '3in'),
+      createDivCol(this.duration, 'col', '1.5in'),
+      createDivCol(this.frequency, 'col', '3in'),
+      createDivCol(divRowDates, 'col', '3.4in')
+      )
   }
 }
-customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' })
+customElements.define('service-spec', ServiceSpec, { extends: 'div' })
 
 
 /**
@@ -348,18 +340,13 @@ customElements.define('time-period-editor', TimePeriodEditor, { extends: 'div' }
     this.classList.add('border', 'rounded', 'mb-3', 'p-1')
 
     // [ ] Service #x - [Duplicate] - [Delete]
-    const toolBar = new ServiceToolBar(groupName + '_select', service.id)
+    const toolBar = new ServiceToolBar(groupName, service.id)
+    toolBar.classList.add('mb-1')
 
-    // Type of service - Duration (hh:mm)
-    const typeSelector = new SelectorFloatLabel(
-      groupName + '_type', service.id, serviceTypes, service.typeID)
-    typeSelector.classList.add('mb-1')
+    // Type of service - Duration (hh:mm) - Frequency - First day - Last day
+    const serviceSpec = new ServiceSpec(groupName, service)
 
-    // First day - Last day - Frequency
-    const timePeriod = new TimePeriodEditor(
-      groupName, service.id, service.startDT, service.untilDT)
-
-    this.append(toolBar, typeSelector, timePeriod)
+    this.append(toolBar, serviceSpec)
   }
 }
 customElements.define('service-editor', ServiceEditor, { extends: 'div' })
@@ -416,8 +403,8 @@ class ServicesSection extends HTMLDivElement {
   }
 
   reset() {
-    this.initialVisit.checkbox.checked = true
-    this.returningKey.checkbox.checked = true
+    this.initialVisit.checkbox.checked = false
+    this.returningKey.checkbox.checked = false
 
     while (this.services.firstChild) {
       this.services.removeChild(this.services.firstChild)
@@ -536,8 +523,6 @@ class QuoteEditor {
 
     this.toolbar = new ToolBar()
     this.services = new ServicesSection()
-    //this.staff = new StaffSection()
-    //this.quote = new QuoteSection()
 
     this.app.append(this.toolbar, this.services)
   }
