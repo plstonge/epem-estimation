@@ -51,6 +51,14 @@ class Quote {
     }
   }
 
+  bindInitialVisitChanged(callback) {
+    this.onInitialVisitChanged = callback
+  }
+
+  bindReturningKeyChanged(callback) {
+    this.onReturningKeyChanged = callback
+  }
+
   bindServiceAdded(callback) {
     this.onServiceAdded = callback
   }
@@ -85,13 +93,31 @@ class Quote {
     }
   }
 
+  setInitialVisit(enabled) {
+    this.initialVisit = enabled
+    this._callBack(this.onInitialVisitChanged, enabled)
+    this.modified = true
+
+    // Log information to console
+    modelLog('Initial visit ' + (enabled ? 'enabled' : 'disabled'), 1)
+  }
+
+  setReturningKey(enabled) {
+    this.returningKey = enabled
+    this._callBack(this.onReturningKeyChanged, enabled)
+    this.modified = true
+
+    // Log information to console
+    modelLog('Returning key ' + (enabled ? 'enabled' : 'disabled'), 1)
+  }
+
   startNew() {
     // Reset the internal data
-    this.initialVisit = false
-    this.returningKey = false
-    this.services = []
+    this.setInitialVisit(false)
+    this.setReturningKey(false)
 
     // Add one service
+    this.services = []
     this.serviceAdd()
 
     // A new quote is considered non-modified

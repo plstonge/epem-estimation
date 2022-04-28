@@ -4,11 +4,15 @@ class QuoteApp {
     this.editor = editor
 
     // Bind events from Quote
+    this.quote.bindInitialVisitChanged(this.onInitialVisitChanged)
+    this.quote.bindReturningKeyChanged(this.onReturningKeyChanged)
     this.quote.bindServiceAdded(this.onServiceAdded)
 
     // Bind events from Editor
     this.editor.bindNewClicked(this.handleNewClicked)
 
+    this.editor.bindInitialVisitChanged(this.handleInitialVisitChanged)
+    this.editor.bindReturningKeyChanged(this.handleReturningKeyChanged)
     this.editor.bindServiceAddClicked(this.handleServiceAddClicked)
     this.editor.bindServiceTypeChanged(this.handleServiceTypeChanged)
 
@@ -23,12 +27,28 @@ class QuoteApp {
     }
   }
 
+  handleInitialVisitChanged = (checked) =>{
+    this.quote.setInitialVisit(checked)
+  }
+
+  handleReturningKeyChanged = (checked) =>{
+    this.quote.setReturningKey(checked)
+  }
+
   handleServiceAddClicked = () => {
     this.quote.serviceAdd()
   }
 
   handleServiceTypeChanged = (serviceID, typeID) => {
     this.quote.serviceSetTypeID(serviceID, typeID)
+  }
+
+  onInitialVisitChanged = (enabled) => {
+    this.editor.setInitialVisit(enabled)
+  }
+
+  onReturningKeyChanged = (enabled) => {
+    this.editor.setReturningKey(enabled)
   }
 
   onServiceAdded = (service) => {

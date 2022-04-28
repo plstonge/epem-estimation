@@ -193,7 +193,7 @@ customElements.define('checkbox-with-label', CheckboxWithLabel, { extends: 'div'
  * @param {*} checked - true if switched on
  * @returns a CheckboxWithLabel with a switch
  */
-function createSwitchWithLabel(id, textContent=tr(id), checked=true) {
+function createSwitchWithLabel(id, textContent=tr(id), checked=false) {
   const swl = new CheckboxWithLabel(id, textContent, checked)
   swl.classList.add('form-switch', 'my-4')
   return swl
@@ -392,6 +392,18 @@ class ServicesSection extends HTMLDivElement {
     this.buttonAdd.addEventListener('click', handle)
   }
 
+  bindInitialVisitChanged(handle) {
+    this.initialVisit.addEventListener('change', (event) =>{
+      handle(event.target.checked)
+    })
+  }
+
+  bindReturningKeyChanged(handle) {
+    this.returningKey.addEventListener('change', (event) =>{
+      handle(event.target.checked)
+    })
+  }
+
   bindTypeChanged(handle) {
     this.services.addEventListener('change', (event) => {
       if (event.target.className === 'form-select Service_type') {
@@ -403,12 +415,17 @@ class ServicesSection extends HTMLDivElement {
   }
 
   reset() {
-    this.initialVisit.checkbox.checked = false
-    this.returningKey.checkbox.checked = false
-
     while (this.services.firstChild) {
       this.services.removeChild(this.services.firstChild)
     }
+  }
+
+  setInitialVisit(enabled) {
+    this.initialVisit.checkbox.checked = enabled
+  }
+
+  setReturningKey(enabled) {
+    this.returningKey.checkbox.checked = enabled
   }
 }
 customElements.define('services-section', ServicesSection, { extends: 'div' })
@@ -531,6 +548,14 @@ class QuoteEditor {
     this.toolbar.bindNewClicked(handle)
   }
 
+  bindInitialVisitChanged(handle) {
+    this.services.bindInitialVisitChanged(handle)
+  }
+
+  bindReturningKeyChanged(handle) {
+    this.services.bindReturningKeyChanged(handle)
+  }
+
   bindServiceAddClicked(handle) {
     this.services.bindAddClicked(handle)
   }
@@ -541,6 +566,14 @@ class QuoteEditor {
 
   reset() {
     this.services.reset()
+  }
+
+  setInitialVisit(enabled) {
+    this.services.setInitialVisit(enabled)
+  }
+
+  setReturningKey(enabled) {
+    this.services.setReturningKey(enabled)
   }
 
   serviceAdd(service) {
