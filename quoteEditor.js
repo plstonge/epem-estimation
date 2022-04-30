@@ -247,15 +247,21 @@ class ServiceToolBar extends HTMLDivElement {
     // Bootstrap 5 classes
     this.classList.add('row', 'm-0', 'px-2', 'py-1')
 
-    this.selector = new CheckboxWithLabel(
-      groupName + '_select', groupName + ' #' + numID, false)
-    this.selector.classList.add('my-1', 'pt-2')
+    const checked = false
 
     this.buttonDuplicate = createButtonAction(tr('Duplicate'))
-    this.buttonDuplicate.disabled = !this.selector.checkbox.checked
+    this.buttonDuplicate.disabled = !checked
 
     this.buttonDelete = createButtonCritical(tr('Delete'))
-    this.buttonDelete.disabled = !this.selector.checkbox.checked
+    this.buttonDelete.disabled = !checked
+
+    this.selector = new CheckboxWithLabel(
+      groupName + '_select.' + numID, groupName + ' #' + numID, checked)
+    this.selector.classList.add('my-1', 'pt-2')
+    this.selector.addEventListener('change', (event) => {
+      this.buttonDuplicate.disabled = !event.target.checked
+      this.buttonDelete.disabled = !event.target.checked
+    })
 
     const buttonRow = createDivRow()
     buttonRow.classList.add('mt-1', 'pb-1')
@@ -393,13 +399,13 @@ class ServicesSection extends HTMLDivElement {
   }
 
   bindInitialVisitChanged(handle) {
-    this.initialVisit.addEventListener('change', (event) =>{
+    this.initialVisit.addEventListener('change', (event) => {
       handle(event.target.checked)
     })
   }
 
   bindReturningKeyChanged(handle) {
-    this.returningKey.addEventListener('change', (event) =>{
+    this.returningKey.addEventListener('change', (event) => {
       handle(event.target.checked)
     })
   }
